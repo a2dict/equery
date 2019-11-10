@@ -1,0 +1,4 @@
+entity-packages: com.a2dict.equery.domain
+querybean-packages: com.a2dict.equery
+transactional-packages: com.a2dict.equery
+profile-location: true
