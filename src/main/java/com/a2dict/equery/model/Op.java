@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 
 /**
  * Operator
- * Created by zhangmd on 2019/10/18
+ * Created by a2dict on 2019/10/18
  */
 @Data
 @Accessors(chain = true)
