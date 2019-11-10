@@ -45,7 +45,7 @@ public class EQuery {
 
 
         return qreq -> {
-            String selectCause = "*";
+            String selectClause = "*";
 
             List<String> selects = qreq.getSelect().stream()
                     .map(StringUtil::camelcase2underscore)
@@ -53,13 +53,13 @@ public class EQuery {
                     .collect(toList());
 
             if (!selects.isEmpty()) {
-                selectCause = selects.stream()
+                selectClause = selects.stream()
                         .map(it -> String.format("`%s`", it))
                         .collect(Collectors.joining(","));
             }
 
 
-            String sql = String.format("select %s from `%s` ", selectCause, tableName);
+            String sql = String.format("select %s from `%s` ", selectClause, tableName);
             List<Object> params = new ArrayList<>();
 
             // parse condition
@@ -73,19 +73,19 @@ public class EQuery {
                     .collect(toList());
 
             if (!conds.isEmpty()) {
-                String whereCause = conds.stream().map(Cond::getCond)
+                String whereClause = conds.stream().map(Cond::getCond)
                         .collect(joining(" and "));
-                sql = sql + " where " + whereCause;
+                sql = sql + " where " + whereClause;
                 params = conds.stream()
                         .map(Cond::getVals)
                         .flatMap(List::stream)
                         .collect(toList());
             }
 
-            // parse order
+            // parse sort
             List<String> sorts = qreq.getSort() != null ? qreq.getSort() : new ArrayList<>();
             if (!sorts.isEmpty()) {
-                String odCause = sorts.stream().map(it -> {
+                String odClause = sorts.stream().map(it -> {
                     String od = it.startsWith("-") ? "desc" : "asc";
                     String col = it.replaceAll("^[+-]*", "");
                     return new Od().setCol(col)
@@ -93,7 +93,7 @@ public class EQuery {
                 }).filter(it -> colSet.contains(it.getCol()))
                         .map(it -> String.format("`%s` %s", it.getCol(), it.getOd()))
                         .collect(joining(", "));
-                sql = sql + " order by " + odCause;
+                sql = sql + " order by " + odClause;
             }
 
             // page
@@ -123,7 +123,7 @@ public class EQuery {
 
 
     /**
-     * 解析操作
+     * parse operator
      *
      * @param opEntry
      * @return

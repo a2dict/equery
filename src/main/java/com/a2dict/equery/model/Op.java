@@ -41,8 +41,8 @@ public class Op {
             case "in": {
                 List<Object> vals = JsonUtil.toJavaList(val);
                 if (vals != null && !vals.isEmpty()) {
-                    String inCause = vals.stream().map(it -> "?").collect(Collectors.joining(","));
-                    return new Cond().setCond(String.format("`%s` in (%s)", col, inCause)).setVals(vals);
+                    String inClause = vals.stream().map(it -> "?").collect(Collectors.joining(","));
+                    return new Cond().setCond(String.format("`%s` in (%s)", col, inClause)).setVals(vals);
                 }
                 return null;
             }
@@ -50,8 +50,8 @@ public class Op {
             case "not_in": {
                 List<Object> vals = JsonUtil.toJavaList(val);
                 if (vals != null && !vals.isEmpty()) {
-                    String inCause = vals.stream().map(it -> "?").collect(Collectors.joining(","));
-                    return new Cond().setCond(String.format("`%s` not in (%s)", col, inCause)).setVals(vals);
+                    String inClause = vals.stream().map(it -> "?").collect(Collectors.joining(","));
+                    return new Cond().setCond(String.format("`%s` not in (%s)", col, inClause)).setVals(vals);
                 }
                 return null;
             }
