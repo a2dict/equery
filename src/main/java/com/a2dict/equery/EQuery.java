@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -25,7 +26,11 @@ import static java.util.stream.Collectors.*;
 public class EQuery {
 
     public static <T> IPagedQuery<T> buildPagedQuery(Class<T> clazz) {
-        return buildPagedQuery(DB.getDefault(), clazz);
+        return buildPagedQuery(DB::getDefault, clazz);
+    }
+
+    public static <T> IPagedQuery<T> buildPagedQuery(Database db, Class<T> clazz) {
+        return buildPagedQuery(() -> db, clazz);
     }
 
     /**
@@ -35,7 +40,7 @@ public class EQuery {
      * @param <T>
      * @return
      */
-    public static <T> IPagedQuery<T> buildPagedQuery(Database db, Class<T> clazz) {
+    public static <T> IPagedQuery<T> buildPagedQuery(Supplier<Database> dbSupplier, Class<T> clazz) {
         String idCol = getIdCol(clazz);
         String tableName = getTableName(clazz);
         Set<String> colSet = Stream.of(clazz.getDeclaredFields())
@@ -104,7 +109,7 @@ public class EQuery {
 
             int offset = (qreq.getPage() - 1) * pageSize;
 
-            Query<T> query = db.findNative(clazz, sql);
+            Query<T> query = dbSupplier.get().findNative(clazz, sql);
             for (int i = 0; i < params.size(); i++) {
                 query = query.setParameter(i + 1, params.get(i));
             }
