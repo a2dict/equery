@@ -14,9 +14,9 @@ class StringUtilTest {
     @Test
     void testCamelcase2underscore() {
         assertEquals(camelcase2underscore("abcDefGh"),"abc_def_gh");
-        assertEquals(camelcase2underscore("AbcDefGh"),"abc_def_gh");
+        assertEquals(camelcase2underscore("AbcDefGh"),"_abc_def_gh");
         assertEquals(camelcase2underscore("abcDEfGh"),"abc_d_ef_gh");
-        assertEquals(camelcase2underscore("ABc"),"a_bc");
+        assertEquals(camelcase2underscore("ABc"),"_a_bc");
     }
 
     @Test

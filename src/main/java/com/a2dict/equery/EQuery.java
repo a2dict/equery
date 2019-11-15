@@ -34,8 +34,8 @@ public class EQuery {
     }
 
     /**
-     * 构建动态查询
      *
+     * @param dbSupplier lazy
      * @param clazz
      * @param <T>
      * @return
