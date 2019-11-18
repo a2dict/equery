@@ -7,6 +7,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import java.util.Date;
 
 /**
  * Created by a2dict on 2019/11/9
@@ -22,4 +23,5 @@ public class Customer {
     private String name;
     private String city;
     private String phone;
+    private Date createdAt;
 }

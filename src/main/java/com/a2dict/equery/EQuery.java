@@ -34,7 +34,6 @@ public class EQuery {
     }
 
     /**
-     *
      * @param dbSupplier lazy
      * @param clazz
      * @param <T>
@@ -88,16 +87,20 @@ public class EQuery {
             }
 
             // parse sort
-            List<String> sorts = qreq.getSort() != null ? qreq.getSort() : new ArrayList<>();
-            if (!sorts.isEmpty()) {
-                String odClause = sorts.stream().map(it -> {
-                    String od = it.startsWith("-") ? "desc" : "asc";
-                    String col = it.replaceAll("^[+-]*", "");
-                    return new Od().setCol(col)
-                            .setOd(od);
-                }).filter(it -> colSet.contains(it.getCol()))
+            List<Od> sorts = qreq.getSort().stream().map(it -> {
+                String od = it.startsWith("-") ? "desc" : "asc";
+                String col = it.replaceAll("^[+-]*", "");
+                return new Od().setCol(col)
+                        .setOd(od);
+            })
+                    .peek(it -> it.setCol(camelcase2underscore(it.getCol())))
+                    .filter(it -> colSet.contains(it.getCol()))
+                    .collect(toList());
+            if(!sorts.isEmpty()){
+                String odClause = sorts.stream()
                         .map(it -> String.format("`%s` %s", it.getCol(), it.getOd()))
                         .collect(joining(", "));
+
                 sql = sql + " order by " + odClause;
             }
 

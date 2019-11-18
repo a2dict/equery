@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
@@ -19,15 +20,17 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class EQueryTest {
     @BeforeAll
     static void setup() {
-        DB.save(new Customer().setName("Carl").setCity("shenzhen").setPhone("010"));
-        DB.save(new Customer().setName("Gary").setCity("ShenZhen").setPhone("011"));
-        DB.save(new Customer().setName("Bob").setCity("guangzhou").setPhone("012"));
-        DB.save(new Customer().setName("Job").setCity("guangzhou").setPhone("013"));
-        DB.save(new Customer().setName("Gate").setCity("guangzhou").setPhone("014"));
+        Date now = new Date();
+        long ts = System.currentTimeMillis();
+        DB.save(new Customer().setName("Carl").setCity("shenzhen").setPhone("010").setCreatedAt(new Date((long) (Math.random() * ts))));
+        DB.save(new Customer().setName("Gary").setCity("ShenZhen").setPhone("011").setCreatedAt(new Date((long) (Math.random() * ts))));
+        DB.save(new Customer().setName("Bob").setCity("guangzhou").setPhone("012").setCreatedAt(new Date((long) (Math.random() * ts))));
+        DB.save(new Customer().setName("Job").setCity("guangzhou").setPhone("013").setCreatedAt(new Date((long) (Math.random() * ts))));
+        DB.save(new Customer().setName("Gate").setCity("guangzhou").setPhone("014").setCreatedAt(new Date((long) (Math.random() * ts))));
     }
 
     @Test
-    void testEqQuery(){
+    void testEqQuery() {
         HashMap<String, String> qMap = new HashMap<>();
         qMap.put("phone", "012");
         QReq qReq = new QReq()
@@ -136,15 +139,15 @@ class EQueryTest {
 
     @Test
     void testSort() {
-        List<String> sort = Arrays.asList("name", "-phone");
+        List<String> sort = Arrays.asList("-createdAt", "city");
         QReq qReq = new QReq()
                 .setSort(sort);
 
         IPagedQuery<Customer> queryFunc = EQuery.buildPagedQuery(Customer.class);
         PageWrap<Customer> pw = queryFunc.query(qReq);
 
-        List<Customer> customs = pw.getData().stream().sorted(comparing(Customer::getName)
-                .thenComparing(comparing(Customer::getPhone).reversed())).collect(toList());
+        List<Customer> customs = pw.getData().stream().sorted(comparing(Customer::getCreatedAt).reversed()
+                .thenComparing(Customer::getCity)).collect(toList());
         assertEquals(pw.getData(), customs);
     }
 }
